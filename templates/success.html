@@ -7,13 +7,6 @@
   <body>
     <h1>This is one of the pages of all time</h1>
     <form method="post" action="/upload_png" enctype="multipart/form-data">
-      <label for="option">Select an option:</label>
-      <select id="option" name="option">
-        <option value="gmail">Gmail</option>
-        <option value="discord">discord</option>
-        <option value="steam">steam</option>
-      </select>
-      <br><br>
       <label for="image">Upload a PNG file:</label>
       <input type="file" id="image" name="image" accept="image/png">
       <br><br>
@@ -22,9 +15,13 @@
 
     <br><br>
 
-    {% if text %}
-      <h2>Text for {{ selected_option }}:</h2>
-      <p>{{ text }}</p>
+    {% if results %}
+      <h2>Results:</h2>
+      <ul>
+        {% for result in results %}
+          <li>{{ result }}</li>
+        {% endfor %}
+      </ul>
     {% endif %}
   </body>
 </html>

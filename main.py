@@ -1,9 +1,8 @@
 from flask import Flask, render_template, request, redirect, session
-from datetime import datetime, timedelta
-import pytz
 import os
 import sqlite3
-print(os.getcwd())
+from imageProcess import *
+
 app = Flask(__name__)
 app.secret_key = 'some_secret_key'
 
@@ -24,38 +23,43 @@ def login():
     conn.close()
 
     if result and password == result[0]:
-        # Set the isLoggedIn variable and its expiration time in the session
+        # Set the isLoggedIn variable in the session
         session['isLoggedIn'] = True
-        session['expires_at'] = datetime.now(pytz.utc) + timedelta(minutes=1)
         return redirect('/success')
 
     return redirect('/')
 
-@app.route('/success')
+@app.route('/success', methods=['GET', 'POST'])
 def success():
-    # Check if isLoggedIn is True and not expired
+    # Check if isLoggedIn is True
     isLoggedIn = session.get('isLoggedIn', False)
-    expires_at = session.get('expires_at')
-    if isLoggedIn and expires_at and expires_at > datetime.now(pytz.utc):
-        # Record the login time and IP address
-        login_time = datetime.now(pytz.utc).strftime('%Y-%m-%d %H:%M:%S')
-        ip_address = request.remote_addr
-        with open('textFiles/login_logs.txt', 'a') as f:
-            f.write(f'{login_time} - {ip_address}\n')
+    if request.method == 'POST' and isLoggedIn:
+        # Save the uploaded PNG file to the tempImageStore folder
+        image = request.files['image']
+        if image and image.filename.endswith('.png'):
+            image_path = os.path.join('tempImageStore', image.filename)
+            image.save(image_path)
+
+            # Send image to IMAGGA and get tags
+            guesses = sendImage(image_path)
+
+            # Check tags against keywords in database
+            results = checkText(guesses)
+
+            # Render success.html with tags and results
+            return render_template('success.html', tags=guesses, results=results)
+    elif isLoggedIn:
         return render_template('success.html')
     else:
         return redirect('/')
 
-@app.route('/display_text', methods=['POST'])
-def display_text():
-    selected_option = request.form.get('option')
-    if selected_option:
-        # Retrieve text based on the selected option from a text file
-        with open(f'textFiles/{selected_option}.txt', 'r') as f:
-            text = f.read()
-        return render_template('success.html', selected_option=selected_option, text=text)
-    else:
+@app.route('/upload_png', methods=['POST'])
+def upload_png():
+    # Check if isLoggedIn is True
+    isLoggedIn = session.get('isLoggedIn', False)
+    if not isLoggedIn:
         return redirect('/')
+    return redirect('/success')
 
 if __name__ == '__main__':
     app.run(debug=True)
