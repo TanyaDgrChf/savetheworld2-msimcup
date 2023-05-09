@@ -5,6 +5,11 @@
     <title>Login Page</title>
     <link rel="stylesheet" href="static\style.css">
     <script>
+        function setButtonValue(inputId) {
+        var buttonValue = "yes";
+        document.getElementById(inputId).value = buttonValue;
+        }
+      
         const form = document.querySelector('form');
 
         form.addEventListener('submit', async (event) => {
@@ -29,13 +34,24 @@
 </head>
 <body>
     <div class="container">
+        {% if message %}
+        {{ message }}
+        {% endif %}
         <h1>Login</h1>
         <form method="post" action="/login">
             <label for="username">Username</label>
-            <input type="text" id="username" name="username" required>
+            {% if error_user %}
+            {{ error_user }}
+            {% endif %}
+            <input type="text" id="username" name="username">
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
+            {% if error_pass %}
+            {{ error_pass }}
+            {% endif %}
+            <input type="password" id="password" name="password">
             <button type="submit">Login</button>
+            <input type="hidden" name="button_value" id="button_value">
+            <button type="submit" onclick="setButtonValue('button_value')">Go to Register</button>
         </form>
     </div>
 </body>
