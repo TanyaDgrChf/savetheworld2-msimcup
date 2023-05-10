@@ -10,7 +10,7 @@ model = modelLoad()
 
 
 app = Flask(__name__)
-app.secret_key = secret
+app.secret_key = 'extremelySecureStoredInPlainTextKey'
 
 def init_db():
     conn = sqlite3.connect('database.db')
