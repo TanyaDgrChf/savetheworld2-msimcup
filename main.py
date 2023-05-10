@@ -6,6 +6,7 @@ import sqlite3
 # from tensorflow.keras.models import load_model
 import numpy as np
 from PIL import Image
+from aiProcessing import analyseImage
 
 # Load the trained model
 # model = load_model('trashnet_model.h5')
@@ -115,32 +116,17 @@ def success():
   # Check if isLoggedIn is True
   isLoggedIn = session.get('isLoggedIn', False)
   if request.method == 'POST' and isLoggedIn:
-    # Save the uploaded PNG file to the tempImageStore folder
-    image = request.files['image']
-    if image and image.filename.endswith('.png'):
-      class_labels = ['Cardboard', 'Glass', 'Metal', 'Paper', 'Plastic', 'Trash']
-      # Load and preprocess the image
-      image = image.resize((224, 224))  # Resize the image to match the input size of the model
-      image_array = np.array(image) / 255.0  # Normalize the pixel values
+      # Save the uploaded PNG file to the tempImageStore folder
+      image = request.files['image']
+      if image and image.filename.endswith('.png'):
+          # Call the analyseImage function from aiProcessing.py to make predictions
+          predicted_class = analyseImage(image)
 
-# Expand dimensions to match the input shape of the model
-      input_image = np.expand_dims(image_array, axis=0)
-
-# Make predictions
-      predictions = model.predict(input_image)
-
-# Get the predicted class index
-      predicted_class_index = np.argmax(predictions[0])
-
-# Map the predicted class index to the corresponding label
-      predicted_class = class_labels[predicted_class_index]
-
-      # Render success.html with tags and results
-      return render_template('success.html', predicted_class=results)
-  elif isLoggedIn:
-    return render_template('success.html')
+          return render_template('success.html', predicted_class=predicted_class)
   else:
-    return redirect('/')
+      return redirect('/')
+
+
 
 @app.route('/upload_png', methods=['POST'])
 def upload_png():

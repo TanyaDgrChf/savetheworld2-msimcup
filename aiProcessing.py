@@ -5,7 +5,7 @@ from PIL import Image
 
 # Load the trained model
 def modelLoad():
-    model = load_model('/tempImageStore/content/trashnet_model.h5')
+    model = load_model('models/trashnet_model.h5')
     return model
 
 model = modelLoad()
