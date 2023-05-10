@@ -43,8 +43,8 @@ def login():
     error_pass = 'Please enter password'
     error_user = 'Please enter username'
     
-    username = request.form['username']
-    password = request.form['password']
+    username = request.form.get('username')
+    password = request.form.get('password')
   
     if not username:
       enter_user = False
@@ -68,7 +68,7 @@ def login():
       if result and password == result[0]:
         # Set the isLoggedIn variable in the session
         session['isLoggedIn'] = True
-        return redirect('/success')
+        return render_template('success.html')
       else:
         return redirect('/')
 
@@ -84,8 +84,8 @@ def register():
     error_pass = 'Please enter password'
     error_user = 'Please enter username'
 
-    username = request.form['username']
-    password = request.form['password']
+    username = request.form.get('username')
+    password = request.form.get('password')
     
     if not username:
       enter_user = False
@@ -125,7 +125,7 @@ def success():
 
             return render_template('success.html', predicted_class=predicted_class)
     else:
-        return redirect('/')
+        return redirect('/login')
 
 @app.route('/upload_png', methods=['POST'])
 def upload_png():
