@@ -16,7 +16,10 @@
     <br><br>
 
     {% if predicted_class %}
-      <h2>This appears to be {{predicted_class}}</h2>
+      <h2>This appears to be {{msg}}</h2>
+      {% if predicted_class == 'Plastic' %}
+      <img src="{{ plastic }}" alt="go to this website: https://www.3devo.com/blog/recycling-plastics">
+      {% endif %}
     {% endif %}
   </body>
 </html>

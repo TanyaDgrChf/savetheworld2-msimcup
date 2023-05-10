@@ -123,7 +123,22 @@ def success():
             # Delete the image from the tempImageStore folder after analysis
             os.remove(os.path.join('tempImageStore', image.filename))
 
-            return render_template('success.html', predicted_class=predicted_class)
+            plastic = None
+            if predicted_class == 'Cardboard':
+               msg = 'Cardboard. Empty whatever may be in the cardboard first, then flatten it before placing in the recycling bin to save space.'
+            elif predicted_class == 'Glass':
+               msg = 'Glass. Ensure that you thoroughly rinse and clean the glass item, then remove any non-glass parts such as labels, caps etc. before placing it in a recycling bin.'
+            elif predicted_class == 'Metal':
+               msg = 'Metal. Rinse the metal cans before and ensure there are no other non-metal objects in or on it before placing it in a recyling bin.'
+            elif predicted_class == 'Paper':
+               msg = 'Paper. No further action needed. You may however consider donating books to charities near you or selling them.'
+            elif predicted_class == 'Plastic':
+               msg = 'Plastic. As a general rule of thumb, clean out the plastics before placing them in the recycling bin. If you can compact plastic containers before placing them in the recycling bin, please do so. Howver, some plastics are not meant to be recycled. Please refer to this image:'
+               plastic = "https://www.3devo.com/hs-fs/hubfs/Imported%20sitepage%20images/13.jpg?width=1000&name=13.jpg"
+            elif predicted_class == 'Trash':
+               msg = 'Trash. This should not go into a recycling bin. Please dispose of it into a waste bin in order not to contaminate recycling bins.'
+
+            return render_template('success.html', predicted_class=predicted_class, msg=msg, plastic=plastic)
     else:
         return redirect('/login')
 
