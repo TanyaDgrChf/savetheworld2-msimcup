@@ -1,15 +1,13 @@
 from flask import Flask, render_template, request, redirect, session
 import os
 import sqlite3
-# from imageProcess import sendImage, checkText
-# import tensorflow as tf
-# from tensorflow.keras.models import load_model
+
 import numpy as np
 from PIL import Image
-from aiProcessing import analyseImage
+from aiProcessing import analyseImage, modelLoad
 
-# Load the trained model
-# model = load_model('trashnet_model.h5')
+model = modelLoad()
+
 
 app = Flask(__name__)
 secret = os.environ['secret_key']
@@ -113,28 +111,30 @@ def register():
 
 @app.route('/success', methods=['GET', 'POST'])
 def success():
-  # Check if isLoggedIn is True
-  isLoggedIn = session.get('isLoggedIn', False)
-  if request.method == 'POST' and isLoggedIn:
-      # Save the uploaded PNG file to the tempImageStore folder
-      image = request.files['image']
-      if image and image.filename.endswith('.png'):
-          # Call the analyseImage function from aiProcessing.py to make predictions
-          predicted_class = analyseImage(image)
+    # Check if isLoggedIn is True
+    isLoggedIn = session.get('isLoggedIn', False)
+    if request.method == 'POST' and isLoggedIn:
+        # Save the uploaded PNG file to the tempImageStore folder
+        image = request.files['image']
+        if image and image.filename.endswith('.png'):
+            # Save the uploaded image to the tempImageStore folder
+            image.save(os.path.join('tempImageStore', image.filename))
+            # Call the analyseImage function from aiProcessing.py to make predictions
+            predicted_class = analyseImage(image)
+            # Delete the image from the tempImageStore folder after analysis
+            os.remove(os.path.join('tempImageStore', image.filename))
 
-          return render_template('success.html', predicted_class=predicted_class)
-  else:
-      return redirect('/')
-
-
+            return render_template('success.html', predicted_class=predicted_class)
+    else:
+        return redirect('/')
 
 @app.route('/upload_png', methods=['POST'])
 def upload_png():
-  # Check if isLoggedIn is True
-  isLoggedIn = session.get('isLoggedIn', False)
-  if not isLoggedIn:
-    return redirect('/')
-  return redirect('/success')
+    # Check if isLoggedIn is True
+    isLoggedIn = session.get('isLoggedIn', False)
+    if not isLoggedIn:
+        return redirect('/')
+    return redirect('/success')
 
 if __name__ == '__main__':
     init_db()

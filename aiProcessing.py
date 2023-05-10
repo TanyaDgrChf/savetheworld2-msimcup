@@ -3,6 +3,7 @@ from tensorflow.keras.models import load_model
 import numpy as np
 from PIL import Image
 
+
 # Load the trained model
 def modelLoad():
     model = load_model('models/trashnet_model.h5')
