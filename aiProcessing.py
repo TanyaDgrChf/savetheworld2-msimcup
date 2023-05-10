@@ -32,4 +32,4 @@ def analyseImage(image_url):
     # Map the predicted class index to the corresponding label
     predicted_class = class_labels[predicted_class_index]
 
-    return ("Predicted class:", predicted_class)
+    return (predicted_class)
