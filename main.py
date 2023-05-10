@@ -10,7 +10,6 @@ model = modelLoad()
 
 
 app = Flask(__name__)
-secret = os.environ['secret_key']
 app.secret_key = secret
 
 def init_db():
