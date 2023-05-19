@@ -4,33 +4,6 @@
     <meta charset="UTF-8">
     <title>Login Page</title>
     <link rel="stylesheet" href="static\style.css">
-    <script>
-        function setButtonValue(inputId) {
-        var buttonValue = "yes";
-        document.getElementById(inputId).value = buttonValue;
-        }
-      
-        const form = document.querySelector('form');
-
-        form.addEventListener('submit', async (event) => {
-            event.preventDefault();
-
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            const response = await fetch('/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            });
-
-            if (response.redirected) {
-                window.location.href = response.url;
-            } else {
-                alert('Invalid username or password');
-            }
-        });
-    </script>
 </head>
 <body>
     <div class="container">
